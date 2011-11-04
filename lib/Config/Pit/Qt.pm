@@ -8,11 +8,12 @@ our $response = 'cancel';
 
 sub NEW {
 	shift->SUPER::NEW();
-	my $setting = shift;
+	my ($caption, $setting) = @_;
 
 	this->{response} = 'cancel';
 	this->{setting} = $setting;
 
+	setWindowTitle($caption);
 	my $vbox = Qt::VBoxLayout();
 
 	my @labels = ();
@@ -25,6 +26,7 @@ sub NEW {
 		$hbox->addWidget($label);
 
 		my $edit = Qt::LineEdit();
+		$edit->setToolTip($setting->{$label_name});
 		if ($label_name =~ /passwd|password/) {
 			$edit->setEchoMode(Qt::LineEdit::Password());
 		}
@@ -109,7 +111,7 @@ my $orig = Config::Pit->can('set');
 		my $setting = $opts{config} || Config::Pit::get($name);
 
 		my $app = Qt::Application();
-		my $dialog = Config::Pit::Qt::Dialog($setting);
+		my $dialog = Config::Pit::Qt::Dialog($name, $setting);
 		$dialog->show;
 		$app->exec;
 
